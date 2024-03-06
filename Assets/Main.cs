@@ -18,6 +18,7 @@ public class Main : MonoBehaviour {
     Tensor output0;
     Tensor inputTensor;
     IWorker worker;
+    int count = 0;
 
     private int _resizeLength = 640; // リサイズ後の正方形の1辺の長さ
 
@@ -53,102 +54,115 @@ public class Main : MonoBehaviour {
 
     void Update()
     {
+        
         if(!webCamTexture.didUpdateThisFrame) return;
 
-        var aspect1 = (float)webCamTexture.width / webCamTexture.height;
-        var aspect2 = (float)inputRT.width / inputRT.height;
-        var aspectGap = aspect2 / aspect1;
-
-        var vMirrored = webCamTexture.videoVerticallyMirrored;
-        var scale = new Vector2(aspectGap, vMirrored ? -1 : 1);
-        var offset = new Vector2((1 - aspectGap) / 2, vMirrored ? 1 : 0);
-
-        
-        Graphics.Blit(webCamTexture, inputRT, scale, offset);
-        //material.mainTexture = inputRT;
-
-        _image = toTexture2D(inputRT);
-
-        // モデルのinputサイズに変換し、Tensorを生成
-        var texture = ResizedTexture(_image, _resizeLength, _resizeLength);
-        inputTensor = new Tensor(texture, channels: 3);
-
-        // 推論実行
-        worker.Execute(inputTensor);
-
-        // 結果の解析
-        output0 = worker.PeekOutput("output0");
-        List<DetectionResult> ditects = ParseOutputs(output0, 0.75f, 0.75f);
-
-
-        inputTensor.Dispose();
-        output0.Dispose();
-
-
-        // 結果の描画
-        // 縮小した画像を解析しているので、結果を元のサイズに変換
-        float scaleX = _image.width / (float)_resizeLength;
-        float scaleY = _image.height / (float)_resizeLength;
-        // 結果表示用に画像をコピー
-        var image = ResizedTexture(_image, _image.width, _image.height);
-        foreach (DetectionResult ditect in ditects)
+        if (count == 3)
         {
-            Debug.Log($"{ditect.score:0.00}");
-            // 検出した領域描画
-            int x1 = (int)(ditect.x1 * scaleX);
-            int x2 = (int)(ditect.x2 * scaleX);
-            int y1 = (int)(ditect.y1 * scaleY);
-            int y2 = (int)(ditect.y2 * scaleY);
-            for (int x = x1; x < x2; x++)
-            {
-                image.SetPixel(x, _image.height - y1, Color.red);
-                image.SetPixel(x, _image.height - (y1 - 1), Color.red);
-                image.SetPixel(x, _image.height - y2, Color.red);
-                image.SetPixel(x, _image.height - (y2 + 1), Color.red);
-            }
-            for (int y = y1; y < y2; y++)
-            {
-                image.SetPixel(x1, _image.height - y, Color.red);
-                image.SetPixel(x1 - 1, _image.height - y, Color.red);
-                image.SetPixel(x2, _image.height - y, Color.red);
-                image.SetPixel(x2 + 1, _image.height - y, Color.red);
-            }
+            var aspect1 = (float)webCamTexture.width / webCamTexture.height;
+            var aspect2 = (float)inputRT.width / inputRT.height;
+            var aspectGap = aspect2 / aspect1;
+
+            var vMirrored = webCamTexture.videoVerticallyMirrored;
+            var scale = new Vector2(aspectGap, vMirrored ? -1 : 1);
+            var offset = new Vector2((1 - aspectGap) / 2, vMirrored ? 1 : 0);
 
 
-            // 検出したキーポイントを描画
-            int point = 0;
-            foreach (KeyPoint kp in ditect.keypoints)
+            Graphics.Blit(webCamTexture, inputRT, scale, offset);
+            //material.mainTexture = inputRT;
+
+            _image = toTexture2D(inputRT);
+
+            // モデルのinputサイズに変換し、Tensorを生成
+            var texture = ResizedTexture(_image, _resizeLength, _resizeLength);
+            inputTensor = new Tensor(texture, channels: 3);
+
+            // 推論実行
+            worker.Execute(inputTensor);
+
+            // 結果の解析
+            output0 = worker.PeekOutput("output0");
+            List<DetectionResult> ditects = ParseOutputs(output0, 0.5f, 0.5f);
+
+
+            inputTensor.Dispose();
+            output0.Dispose();
+
+
+            // 結果の描画
+            // 縮小した画像を解析しているので、結果を元のサイズに変換
+            float scaleX = _image.width / (float)_resizeLength;
+            float scaleY = _image.height / (float)_resizeLength;
+            // 結果表示用に画像をコピー
+            var image = ResizedTexture(_image, _image.width, _image.height);
+            foreach (DetectionResult ditect in ditects)
             {
-                // 中心から7ピクセル範囲を描画
-                int centerX = (int)(kp.x * scaleX);
-                int centerY = (int)(kp.y * scaleY);
-                for (int x = centerX - 3; x < centerX + 3; x++)
+                //Debug.Log($"{ditect.score:0.00}");
+                // 検出した領域描画
+                int x1 = (int)(ditect.x1 * scaleX);
+                int x2 = (int)(ditect.x2 * scaleX);
+                int y1 = (int)(ditect.y1 * scaleY);
+                int y2 = (int)(ditect.y2 * scaleY);
+                for (int x = x1; x < x2; x++)
                 {
-                    for (int y = centerY - 3; y < centerY + 3; y++)
-                    {
-                        // 検出結果は左上が原点だが、Texture2Dは左下が原点なので上下を入れ替える
-                        image.SetPixel(x, _image.height - y, _colorList[point]);
-                    }
+                    image.SetPixel(x, _image.height - y1, Color.red);
+                    image.SetPixel(x, _image.height - (y1 - 1), Color.red);
+                    image.SetPixel(x, _image.height - y2, Color.red);
+                    image.SetPixel(x, _image.height - (y2 + 1), Color.red);
                 }
-                point++;
+                for (int y = y1; y < y2; y++)
+                {
+                    image.SetPixel(x1, _image.height - y, Color.red);
+                    image.SetPixel(x1 - 1, _image.height - y, Color.red);
+                    image.SetPixel(x2, _image.height - y, Color.red);
+                    image.SetPixel(x2 + 1, _image.height - y, Color.red);
+                }
+
+
+                // 検出したキーポイントを描画
+                int point = 0;
+                foreach (KeyPoint kp in ditect.keypoints)
+                {
+                    // 中心から7ピクセル範囲を描画
+                    int centerX = (int)(kp.x * scaleX);
+                    int centerY = (int)(kp.y * scaleY);
+                    for (int x = centerX - 3; x < centerX + 3; x++)
+                    {
+                        for (int y = centerY - 3; y < centerY + 3; y++)
+                        {
+                            // 検出結果は左上が原点だが、Texture2Dは左下が原点なので上下を入れ替える
+                            image.SetPixel(x, _image.height - y, _colorList[point]);
+                        }
+                    }
+                    point++;
+                }
             }
+            image.Apply();
+
+            //_imageView.texture = image;
+            material.mainTexture = image;
+            count = 0;
         }
-        image.Apply();
-
-        //_imageView.texture = image;
-        material.mainTexture = image;
-
+        /*
+        else
+        {
+            material.mainTexture = inputRT;
+        }
+        */
+        count++;
+       
 
 
     }
 
     void OnDestroy()
     {
-        if (webCamTexture != null) Destroy(webCamTexture);
-        if (inputRT != null) Destroy(inputRT);
+        
+        //if (webCamTexture != null) Destroy(webCamTexture);
+        //if (inputRT != null) Destroy(inputRT);
         worker.Dispose();
-        //inputTensor.Dispose();
-        //output0.Dispose();
+        inputTensor.Dispose();
+        output0.Dispose();
     }
 
     private List<DetectionResult> ParseOutputs(Tensor output0, float threshold, float iouThres) {
