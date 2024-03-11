@@ -25,6 +25,9 @@ public class FeetDetectionScript : MonoBehaviour
     Tensor inputTensor;
     IWorker worker;
     int count = 0;
+    private float scaleX;
+    private float scaleY;
+    private float scaleMean = 1.0f;
 
     private Vector3 dir_left = new Vector3(0, 0, 0);
     private Vector3 dir_up_left = new Vector3(0, 0, -1);
@@ -49,20 +52,22 @@ public class FeetDetectionScript : MonoBehaviour
 
 
     private List<Color> _colorList = new List<Color>() {
-        Color.red,     // 0: big toe left
+        Color.gray,     // 0: big toe left
         Color.yellow,    // 1: big toe right
         Color.blue,    // 2: little toe left
         Color.green,    // 3: little toe right
         Color.white,    // 4: heel left
         Color.white,   // 5: heel right
-        Color.cyan, // 6: inside ankle left
-        Color.cyan,   // 7: inside ankle right
+        Color.magenta, // 6: inside ankle left
+        Color.magenta,   // 7: inside ankle right
         Color.black, // 8: outside ankle left
         Color.black,   // 9: outside ankle right
-        new Color(0.15f,0.15f,0,1), // 10: ankle kink left
-        new Color(0.15f,0.15f,0,1)    // 11: ankle kink right
+        Color.red, // 10: ankle kink left
+        Color.red    // 11: ankle kink right
        
     };
+    
+
 
 
     // Start is called before the first frame update
@@ -77,6 +82,10 @@ public class FeetDetectionScript : MonoBehaviour
         webCamTexture = new WebCamTexture(webCamName, (int)webCamResolution.x, (int)webCamResolution.y);
         webCamTexture.Play();
         inputRT = new RenderTexture((int)webCamResolution.x, (int)webCamResolution.y, 0);
+
+        _image = toTexture2D(inputRT);
+        scaleX = _image.width / (float)_resizeLength;
+        scaleY = _image.height / (float)_resizeLength;
 
     }
 
@@ -118,8 +127,7 @@ public class FeetDetectionScript : MonoBehaviour
 
 
 
-            float scaleX = _image.width / (float)_resizeLength;
-            float scaleY = _image.height / (float)_resizeLength;
+            
 
             var image = ResizedTexture(_image, _image.width, _image.height);
             foreach (DetectionResult ditect in ditects)
@@ -166,16 +174,18 @@ public class FeetDetectionScript : MonoBehaviour
 
                     int centerX = (int)(kp.x * scaleX);
                     int centerY = (int)(kp.y * scaleY);
+                    int wallX = (int)(centerX - _image.width * 0.5f);
+                    int wallY = (int)(_image.height * 0.5f - centerY);
                     for (int x = centerX - 3; x < centerX + 3; x++)
                     {
                         for (int y = centerY - 3; y < centerY + 3; y++)
                         {
 
                             image.SetPixel(x, _image.height - y, _colorList[point]);
-                            landmarks[point] = new Vector3(x, _image.height - y, wall.transform.position.z);
                         }
                     }
-                    
+                    //landmarks[point] = new Vector3(centerX, _image.height - centerY,-1.0f);
+                    landmarks[point] = new Vector3(wallX, wallY, -1.0f);
                     point++;
                 }
             }
@@ -189,14 +199,23 @@ public class FeetDetectionScript : MonoBehaviour
         material.mainTexture = webCamTexture;
         count++;
 
-        /*
-        if (landmarks[1] != null && landmarks[3] != null && landmarks[11] != null)
+        dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
+        //dir_right.x = -dir_right.x;
+        shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
+        //shoe_right.position = new Vector3(landmarks[11].x, 0, -1);
+        shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
+
+        //scaling for the shoe
+        if (landmarks[11] != null && landmarks[5] != null)
         {
-            dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
-            shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
-            shoe_right.position = landmarks[11];
+            float scale = (landmarks[11] - landmarks[5]).magnitude;
+            float scaling = scale / 100;
+            scaleMean = (scaleMean + 0.05f * scaling) / 1.05f;
+            int sc = (int)(scaleMean);
+            Vector3 vector = new Vector3(sc, sc, sc);
+            shoe_right.localScale = vector;
         }
-        */
+
     }
 
     void OnDestroy()
