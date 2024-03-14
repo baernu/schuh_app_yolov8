@@ -190,35 +190,34 @@ public class FeetDetectionScript : MonoBehaviour
         material.mainTexture = webCamTexture;
         count++;
 
-        dir_right = landmarks[1] - landmarks[11];
+        dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
         //shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
         shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
-        
-        
-        
+
+
+
 
 
         //scaling for the shoe
-        //if (landmarks[11] != null && landmarks[5] != null)
-        //{
-            float scale1 = (landmarks[11] - landmarks[5]).magnitude;
-            float scaling = scale1 * 0.0111f;
-            scaleMean = (scaleMean + 0.25f * scaling) * 0.8f;
-            if (Mathf.Abs(scaleMean - scaling) < 0.1 * scaleMean || scaling < scaleMean)
-            {
-                int sc = (int)(scaleMean);
-                Vector3 vector = new Vector3(sc, sc, sc);
-                shoe_right.localScale = vector;
-                
-            }
-            
-        //}
+        float scale1 = (landmarks[11] - landmarks[5]).magnitude;
+        float scaling = scale1 * 0.0111f;
+        scaleMean = (scaleMean + 0.25f * scaling) * 0.8f;
+        if (Mathf.Abs(scaleMean - scaling) < 0.1 * scaleMean || scaling < scaleMean)
+        {
+            int sc = (int)(scaleMean);
+            Vector3 vector = new Vector3(sc, sc, sc);
+            shoe_right.localScale = vector;
+
+        }
+
+
+
 
 
         ///////////////////rotate the shoe to the side
-        
+
         dir_up_right = new Vector3(0, 0, -1);
-        dir_right_bottom = landmarks[1]  - landmarks[5];
+        dir_right_bottom = (landmarks[1] + landmarks[3]) * 0.5f  - landmarks[5];
         Vector3 vec1 = landmarks[11] - landmarks[5];
         float angle1 = Vector3.Dot(dir_right_bottom.normalized, vec1.normalized);
         var oldAngleMean = angleMean;
@@ -229,21 +228,27 @@ public class FeetDetectionScript : MonoBehaviour
         {
             
             angleMean = (angleMean + 0.25f * (1 - angle1) * 90) * 0.8f;
-            //dir_up_right = Quaternion.AngleAxis(-(1 - angle1) * 90, dir_right) * dir_up_right;
         }
         else
         {
             angleMean = (angleMean - 0.25f * (1 - angle1) * 90) * 0.8f;
-            //dir_up_right = Quaternion.AngleAxis((1 - angle1) * 90, dir_right) * dir_up_right;
-        }
-        //Debug.Log("meanAngle " + angleMean);
-        if (Mathf.Abs(angleMean - oldAngleMean) < 30)
-        {
-            dir_up_right = Quaternion.AngleAxis(angleMean, dir_right) * dir_up_right;
         }
         
+        //if (Mathf.Abs((1 - angle1) * 90 - oldAngleMean) < 10)
+        //{
+        dir_up_right = Quaternion.AngleAxis(angleMean, dir_right) * dir_up_right;
+        //}
+
+
+        //rotate the shoe up and down
+        float val1 = vec1.magnitude / dir_right_bottom.magnitude - 0.7f;
+        var cross = Vector3.Cross(dir_up_right, dir_right);
+        dir_up_right = Quaternion.AngleAxis(val1 * 90, cross) * dir_up_right;
+        var new_dir_right = -Vector3.Cross(dir_up_right, cross);
+        //Debug.Log("rot: " + val1 * 90);
         
-        shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
+        //assign the rotation to the shoe
+        shoe_right.rotation = Quaternion.LookRotation(new_dir_right.normalized, dir_up_right);
 
     }
 

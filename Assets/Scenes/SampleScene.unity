@@ -737,7 +737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2745e768acbfc2468413d5e16cfdaf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _model: {fileID: 5022602860645237092, guid: 2fe70539a5abc114b9e53c1c865df0bd, type: 3}
+  _model: {fileID: 5022602860645237092, guid: bb241a40fb356744790974d161f73569, type: 3}
   _image: {fileID: 0}
   _imageView: {fileID: 0}
   webCamResolution: {x: 1920, y: 1080}
