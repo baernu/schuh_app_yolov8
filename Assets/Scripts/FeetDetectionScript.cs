@@ -30,6 +30,7 @@ public class FeetDetectionScript : MonoBehaviour
     private float scaleY;
     private float scaleMean = 1.0f;
     private float angleMean = 0;
+    private float adjustFactor;
 
     private Vector3 dir_left = new Vector3(0, 0, 0);
     private Vector3 dir_up_left = new Vector3(0, 0, -1);
@@ -69,7 +70,7 @@ public class FeetDetectionScript : MonoBehaviour
         Color.red    // 11: ankle kink right
        
     };
-    
+
 
 
 
@@ -89,6 +90,9 @@ public class FeetDetectionScript : MonoBehaviour
         _image = toTexture2D(inputRT);
         scaleX = _image.width / (float)_resizeLength;
         scaleY = _image.height / (float)_resizeLength;
+        var hightCam = Mathf.Abs(Camera.main.transform.position.z - wall.position.z);
+        var hightShoe = hightCam - Mathf.Abs(shoe_right.position.z - wall.position.z);
+        adjustFactor = (hightCam - hightShoe) * 0.001f;
 
     }
 
@@ -192,7 +196,10 @@ public class FeetDetectionScript : MonoBehaviour
 
         dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
         //shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
-        shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
+        //shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
+        shoe_right.position = new Vector3(landmarks[11].x * 0.0086f, landmarks[11].y * 0.0086f, shoe_right.position.z);
+        //shoe_right.position = new Vector3(landmarks[11].x * adjustFactor, landmarks[11].y * adjustFactor, -1.0f);
+        //Debug.Log("adjustFactor: " + adjustFactor);
 
 
 
@@ -200,14 +207,20 @@ public class FeetDetectionScript : MonoBehaviour
 
         //scaling for the shoe
         float scale1 = (landmarks[11] - landmarks[5]).magnitude;
+        //float scaling = scale1 * 0.0111f;
         float scaling = scale1 * 0.0111f;
         scaleMean = (scaleMean + 0.25f * scaling) * 0.8f;
         if (Mathf.Abs(scaleMean - scaling) < 0.1 * scaleMean || scaling < scaleMean)
         {
+            
             int sc = (int)(scaleMean);
+            
+            if (scaling < scaleMean)
+            {
+                sc = (int)scaling;
+            }
             Vector3 vector = new Vector3(sc, sc, sc);
             shoe_right.localScale = vector;
-
         }
 
 
