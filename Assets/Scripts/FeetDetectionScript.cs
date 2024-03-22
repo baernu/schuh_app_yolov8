@@ -197,7 +197,7 @@ public class FeetDetectionScript : MonoBehaviour
         dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
         //shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
         //shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
-        shoe_right.position = new Vector3(landmarks[11].x * 0.0086f, landmarks[11].y * 0.0086f, shoe_right.position.z);
+        shoe_right.position = new Vector3(landmarks[11].x * 0.0088f, landmarks[11].y * 0.0088f, -2.0f);
         //shoe_right.position = new Vector3(landmarks[11].x * adjustFactor, landmarks[11].y * adjustFactor, -1.0f);
         //Debug.Log("adjustFactor: " + adjustFactor);
 
