@@ -169,7 +169,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      blenderkit_logo_0: -7203677296677852159
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

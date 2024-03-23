@@ -169,7 +169,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      color_shoe1.6_0: -3256043735744630847
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

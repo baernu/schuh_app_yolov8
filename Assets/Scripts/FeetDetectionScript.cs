@@ -197,7 +197,7 @@ public class FeetDetectionScript : MonoBehaviour
         dir_right = (landmarks[1] + landmarks[3]) * 0.5f - landmarks[11];
         //shoe_right.rotation = Quaternion.LookRotation(dir_right.normalized, dir_up_right);
         //shoe_right.position = new Vector3(landmarks[11].x * 0.008f, landmarks[11].y * 0.008f, -1.0f);
-        shoe_right.position = new Vector3(landmarks[11].x * 0.0088f, landmarks[11].y * 0.0088f, -2.0f);
+        shoe_right.position = new Vector3(landmarks[11].x * 0.01f, landmarks[11].y * 0.01f, -3.0f);
         //shoe_right.position = new Vector3(landmarks[11].x * adjustFactor, landmarks[11].y * adjustFactor, -1.0f);
         //Debug.Log("adjustFactor: " + adjustFactor);
 
@@ -208,8 +208,8 @@ public class FeetDetectionScript : MonoBehaviour
         //scaling for the shoe
         float scale1 = (landmarks[11] - landmarks[5]).magnitude;
         //float scaling = scale1 * 0.0111f;
-        float scaling = scale1 * 0.0111f;
-        scaleMean = (scaleMean + 0.25f * scaling) * 0.8f;
+        float scaling = scale1 * 0.01f;
+        scaleMean = (scaleMean + 0.3f * scaling) * 0.8f;
         if (Mathf.Abs(scaleMean - scaling) < 0.1 * scaleMean || scaling < scaleMean)
         {
             
@@ -232,7 +232,7 @@ public class FeetDetectionScript : MonoBehaviour
         dir_up_right = new Vector3(0, 0, -1);
         dir_right_bottom = (landmarks[1] + landmarks[3]) * 0.5f  - landmarks[5];
         Vector3 vec1 = landmarks[11] - landmarks[5];
-        float angle1 = Vector3.Dot(dir_right_bottom.normalized, vec1.normalized);
+        float angle1 = Vector3.Dot(dir_right.normalized, vec1.normalized);
         var oldAngleMean = angleMean;
         
         
@@ -256,7 +256,7 @@ public class FeetDetectionScript : MonoBehaviour
         //rotate the shoe up and down
         float val1 = vec1.magnitude / dir_right_bottom.magnitude - 0.7f;
         var cross = Vector3.Cross(dir_up_right, dir_right);
-        dir_up_right = Quaternion.AngleAxis(val1 * 90, cross) * dir_up_right;
+        dir_up_right = Quaternion.AngleAxis(val1 * 200 + 60, cross) * dir_up_right;
         var new_dir_right = -Vector3.Cross(dir_up_right, cross);
         //Debug.Log("rot: " + val1 * 90);
         
