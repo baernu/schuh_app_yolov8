@@ -2,8 +2,8 @@ Shader "Custom/SeeThroughShader"
 
 {
     SubShader{
-            Tags {"Queue" = "Geometry-10" }
-            //Tags {"Queue" = "Geometry-20" }
+            //Tags {"Queue" = "Geometry-10" }
+            Tags {"Queue" = "Geometry-20" }
             Lighting Off
             ZTest LEqual
             ZWrite On
