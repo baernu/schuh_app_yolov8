@@ -1,3 +1,5 @@
 # ninja log v5
-0	188	7314314089078990	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	ef2f6b1b4eda7259
 189	316	7314314090005381	C:/Users/bernh/git/schuh_app/schuh_app_yolov8/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/113s6e1d/obj/arm64-v8a/libswappywrapper.so	725b62e99b830fbc
+0	188	7314314089078990	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	ef2f6b1b4eda7259
+1	693	7329146615085324	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	ef2f6b1b4eda7259
+693	2190	7329146629405804	C:/Users/bernh/git/schuh_app/schuh_app_yolov8/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/113s6e1d/obj/arm64-v8a/libswappywrapper.so	725b62e99b830fbc
