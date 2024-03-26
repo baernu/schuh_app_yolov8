@@ -3,7 +3,7 @@ Shader "Custom/SeeThroughShader"
 {
     SubShader{
             //Tags {"Queue" = "Geometry-10" }
-            Tags {"Queue" = "Geometry-20" }
+            Tags {"Queue" = "Geometry" }
             Lighting Off
             ZTest LEqual
             ZWrite On
@@ -17,7 +17,7 @@ Shader "Custom/SeeThroughShader"
 {
     SubShader
     {
-        Tags { "Queue" = "Transparent + 1990" }
+        Tags { "Queue" = "Geometry" }
         Blend SrcAlpha OneMinusSrcAlpha  // Enable alpha blending
         Lighting Off
         ZTest LEqual
