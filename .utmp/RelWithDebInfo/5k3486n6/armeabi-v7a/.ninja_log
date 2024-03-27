@@ -1,0 +1,11 @@
+# ninja log v5
+26	131	7332481464058165	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	8b4709cd273756b9
+133	272	7332481464985562	C:/Users/bernh/git/schuh_app/schuh_app_yolov8/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5k3486n6/obj/armeabi-v7a/libswappywrapper.so	c63da5a1fc5ab657
+15	638	7332481469007138	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	3789d5573fbb02b0
+5	650	7332481469143235	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	f1bd45904d9dcf0f
+19	695	7332481469644094	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	ed7776c9b142e611
+22	744	7332481470110043	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	baee904b922af6ff
+1	788	7332481470545086	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	5a85f41ecc56d7de
+12	885	7332481471534093	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	7151379064386889
+8	994	7332481472575250	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	b261de6704167d2f
+994	1101	7332481473443500	C:/Users/bernh/git/schuh_app/schuh_app_yolov8/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5k3486n6/obj/armeabi-v7a/libgame.so	8565b6421589fe1
